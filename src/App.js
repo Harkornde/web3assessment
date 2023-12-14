@@ -6,6 +6,7 @@ import TakeContact from "./TakeContact/TakeContact";
 
 function App() {
   const [notes, setNotes] = useState([]);
+  const [edit, setEdit] = useState(null);
 
   function addNote(newNote) {
     setNotes((prevNotes) => {
@@ -21,10 +22,34 @@ function App() {
     });
   }
 
+  function editNote(id) {
+    const note = notes.find((noteItem, index) => index === id);
+    setEdit(note);
+  }
+
+  function updateNote(newNote) {
+    const index = notes.findIndex((noteItem) => noteItem.id === newNote.id);
+    setNotes((prevNotes) => {
+      return prevNotes.map((noteItem, i) => {
+        if (i === index) {
+          return newNote;
+        } else {
+          return noteItem;
+        }
+      });
+    });
+    setEdit(null);
+  }
+
   return (
     <div className="App">
       <Header />
-      <CreateArea onAdd={addNote} />
+      <CreateArea
+        onAdd={addNote}
+        onUpdate={updateNote}
+        note={edit}
+        id={edit ? edit.id : null}
+      />
       {notes.map((noteItem, index) => {
         return (
           <TakeContact
@@ -34,6 +59,7 @@ function App() {
             email={noteItem.email}
             number={noteItem.number}
             onDelete={deleteNote}
+            onEdit={editNote}
           />
         );
       })}
@@ -42,42 +68,3 @@ function App() {
 }
 
 export default App;
-
-// function App() {
-//   const [notes, setNotes] = useState([]);
-
-//   function addNote(newNote) {
-//     setNotes(prevNotes => {
-//       return [...prevNotes, newNote];
-//     });
-//   }
-
-//   function deleteNote(id) {
-//     setNotes(prevNotes => {
-//       return prevNotes.filter((noteItem, index) => {
-//         return index !== id;
-//       });
-//     });
-//   }
-
-//   return (
-//     <div>
-//       <Header />
-//       <CreateArea onAdd={addNote} />
-//       {notes.map((noteItem, index) => {
-//         return (
-//           <Note
-//             key={index}
-//             id={index}
-//             title={noteItem.title}
-//             content={noteItem.content}
-//             onDelete={deleteNote}
-//           />
-//         );
-//       })}
-//       <Footer />
-//     </div>
-//   );
-// }
-
-// export default App;
